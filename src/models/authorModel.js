@@ -5,11 +5,11 @@
 };
 
 const authorSchema = new mongoose.Schema( {
-    fName:{
+    fname:{
         type: String,
         required: true
     },
-    lName: {
+    lname: {
         type: String,
         required: true
     },
@@ -21,12 +21,13 @@ const authorSchema = new mongoose.Schema( {
     email:{
         type: String,
         required: true,
-        validate: [validateEmail, 'Please fill a valid email address'],
+      validate: [validateEmail, 'Please fill a valid email address'],
     },
     password: {
         type: String,
         required: true
     }
+     
 }, { timestamps: true });
 
-module.exports = mongoose.model('Author', authorSchema)
+module.exports = mongoose.model('Authors', authorSchema)

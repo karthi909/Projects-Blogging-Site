@@ -18,11 +18,11 @@ const createBlogs = async function (req, res) {
         let author = await authorModel.findOne({_id: authorid}, {_id:1});
 
         console.log(author)
-        if (authorid == null ) {
+        if (!authorid) {
             res.send({msg:' author Id missing'})
         } 
         
-         if( authorid !== author._id){
+         if( authorid != author._id){
             res.send({msg: 'invalid authorId'})
         }
 
