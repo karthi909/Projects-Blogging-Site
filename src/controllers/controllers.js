@@ -21,9 +21,9 @@ const createBlogs = async (req, res) => {
         let blog = req.body
         if(!blog) return res.status(400).send({status : false, Error :"Input Data is Missing"})
         let authorid = req.body.authorId
+         if (!authorid) return res.send({ status : false,Error: 'Author Id missing' })
         if(!mongoose.isValidObjectId(authorid)) return res.status(404).send({status : false, Error : "Invalid Mongoose object Id"})
         let author = await authorModel.findOne({ _id: authorid }, { _id: 1 });
-        if (!authorid) return res.send({ status : false,Error: 'Author Id missing' })
         if (authorid != author._id) return res.send({ msg: 'invalid AuthorId' })
         let createBlog = await blogsModel.create(blog)
         res.status(201).send({ msg: createBlog })
@@ -57,7 +57,7 @@ const updateBlogs = async (req, res) => {
         if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId"})
         let blogAll = req.body
         if(!blogAll) return res.status(400).send({status: false, Error: "Input Data is Missing"})
-        const updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, {blogAll,publishedAt : new Date()}, { new: true })
+        let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, {blogAll,publishedAt : new Date()}, { new: true })
         if (updateBlogs.length === 0) return res.status(404).send({ status: false, msg: "Failed to Update" })
         res.status(200).send({ msg: updateBlogs })
     } catch (err) {
@@ -70,12 +70,9 @@ const updateBlogs = async (req, res) => {
 const deleteBlog = async (req, res) => {
     try {
         let blogId = req.params.blogId;
+        if(!blogId) return res.status(400).send({status :false,Error:"BlogId is Required"})
         if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId"})
-        let blog = await blogsModel.findById(blogId)
-        if (!blog) return res.send("Invalid Blog Data")
-        let blogData = req.body;
-        if(!blogData) return res.status(400).send({status : false, Error:"Input Data is Missing"})
-        let updatedblog = await blogsModel.findOneAndUpdate({ _id: blogId }, blogData, { new: true });
+        let updatedblog = await blogsModel.findOneAndUpdate({ _id: blogId }, {isDeleted : true}, { new: true });
         if(!updatedblog) return res.status(404).send({status :  false, Error :"Failed to Delete Data"})
         res.status(200).send({ status: true, data: updatedblog })
     }
