@@ -20,7 +20,9 @@ router.get("/getAllBlogs", controllers.getBlogs)
 
 router.put("/blogs/:blogId", controllers.updateBlogs)
 
+router.delete("/blogs/:blogId", controllers.deleteBlog)
 
+router.delete("/blogs", controllers.deletByQuery)
 
 
 
