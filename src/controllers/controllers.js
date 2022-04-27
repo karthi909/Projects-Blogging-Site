@@ -61,11 +61,14 @@ const geAllBlogs = async function (req, res) {
 }
   };
   let filterBlogs = async function (req, res){
-      let author = req.query.authorId
-      let category = req.query.category
-      let tag = req.query.tags
-      let subcategory = req.query.subcategory
-      let blogs = await blogsModel.find({$or: [{authorId: author},{category: category},{tags: tag}, {subcategory: subcategory}]},{isPublished: true},{isDeleted: false})
+    //   let author = req.query.authorId
+    //   let category = req.query.category
+    //   let tag = req.query.tags
+    //   let subcategory = req.query.subcategory
+    //   let blogs = await blogsModel.find({$or: [{authorId: author},{category: category},{tags: tag}, {subcategory: subcategory}]})
+      req.query.isDeleted = false
+      req.res.isPublished = true
+      let blogs = await blogsModel.find(req.query)
       console.log(blogs)
   }
   
