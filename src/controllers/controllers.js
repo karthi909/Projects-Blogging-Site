@@ -59,6 +59,27 @@ const updateBlogs = async function (req, res) {
 
 
 
+const deleteBlog = async function (req, res) {
+    try{
+            let blogId = req.params.blogId;
+            let blog = await blogsModel.findById(blogId)
+        
+            if(!blog){
+            return res.send("No such blog exists")
+            }
+        
+        let blogData = req.body;
+        let updatedblog = await blogsModel.findOneAndUpdate({_id: blogId}, blogData, {new: true});
+        res.send({status: true, data: updatedblog})
+
+    }
+    catch(err){
+        console.log(err)
+        res.status(500).send({msg: err.message})
+    } 
+
+}
+
 module.exports.createAuthor = createAuthor
 
 module.exports.createBlogs = createBlogs
