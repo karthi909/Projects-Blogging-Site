@@ -16,10 +16,10 @@ router.post("/createAuthor", controllers.createAuthor )
 
 router.post("/createBlog", controllers.createBlogs)
 
-router.get("/getAllBlogs", controllers.geAllBlogs)
+router.get("/getAllBlogs", controllers.getBlogs)
 
+router.put("/blogs/:blogId", controllers.updateBlogs)
 
-router.get("/getfilterBlogs", controllers.filterBlogs)
 
 
 
