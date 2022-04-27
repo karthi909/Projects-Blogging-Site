@@ -16,6 +16,13 @@ router.post("/createAuthor", controllers.createAuthor )
 
 router.post("/createBlog", controllers.createBlogs)
 
+router.get("/getAllBlogs", controllers.geAllBlogs)
+
+
+router.get("/getfilterBlogs", controllers.filterBlogs)
+
+
+
 
 module.exports = router;
 
