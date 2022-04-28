@@ -1,7 +1,7 @@
 const authorModel = require("../models/authorModel")
 const blogsModel = require("../models/blogsModel")
 const mongoose = require('mongoose');
-
+const jwt=require('jsonwebtoken')
 
 const createAuthor = async (req, res) => {
     try {
@@ -105,6 +105,44 @@ const deletByQuery = async (req, res) => {
 }
 
 
+const login = async function (req, res) {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+        const author = await authorModel.findOne({ email: email, password: password });
+        if (!author) {
+            res.send({ msg: "credentials are incorrect" });
+        }
+        let token = jwt.sign(
+            {
+                authorId: author._id,
+                batch: "uranium",
+                organisation: "FunctionUp",
+            },
+            "functionup-Uranium"
+        )
+        res.status(201).send({ send: token });
+    } catch (err) {
+        res.status(500).send({ send: err.message });
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports.createAuthor = createAuthor
 
@@ -117,5 +155,5 @@ module.exports.updateBlogs = updateBlogs
 module.exports.deleteBlog = deleteBlog
 
 module.exports.deletByQuery = deletByQuery
-
+module.exports.login=login;
 
