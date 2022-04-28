@@ -61,8 +61,9 @@ const updateBlogs = async (req, res) => {
         req.body.publishedAt = new Date()
         req.body.isPublished =true;
         let blogAll = req.body
+        let {title,body,tags,category,subcategory} = blogAll
         if(!blogAll) return res.status(400).send({status: false, Error: "Input Data is Missing"})
-        let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, blogAll , { new: true })
+        let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, {$addToSet:{tags:tags, subcategory:subcategory},title:title, body:body,category:category},{ new: true })
         if (updateBlogs.length === 0) return res.status(404).send({ status: false, msg: "Failed to Update" })
         res.status(200).send({ msg: updateBlogs })
     } catch (err) {
