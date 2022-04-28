@@ -104,42 +104,22 @@ const deletByQuery = async (req, res) => {
     }
 }
 
+const loginAuthor = async (req, res) => {
+    try{
+    let data = req.body
+    if(Object.keys(data).length == 0) return res.status(400).send({status: false, msg: "Email and password is required to login"})
+    
+    let getAuthorData = await authorModel.findOne({email: data.email, password: data.password})
+    if(!getAuthorData) return res.status(401).send({ status: false, msg: "Email or password is incorrect"})
 
-const login = async function (req, res) {
-    try {
-        const email = req.body.email;
-        const password = req.body.password;
-        const author = await authorModel.findOne({ email: email, password: password });
-        if (!author) {
-            res.send({ msg: "credentials are incorrect" });
-        }
-        let token = jwt.sign(
-            {
-                authorId: author._id,
-                batch: "uranium",
-                organisation: "FunctionUp",
-            },
-            "functionup-Uranium"
-        )
-        res.status(201).send({ send: token });
-    } catch (err) {
-        res.status(500).send({ send: err.message });
+    let token = jwt.sign({authorId: getAuthorData._id}, "Uranium Project-1")
+
+    res.setHeader("x-api-key", token)
+    res.status(200).send({status: true, msg: token})
+    }catch(err){
+        res.status(200).send({status: true, Error: err.message})
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -155,5 +135,7 @@ module.exports.updateBlogs = updateBlogs
 module.exports.deleteBlog = deleteBlog
 
 module.exports.deletByQuery = deletByQuery
-module.exports.login=login;
+// module.exports.login=login;
+
+module.exports.loginAuthor = loginAuthor
 
