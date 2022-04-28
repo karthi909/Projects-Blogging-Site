@@ -23,6 +23,7 @@ const createBlogs = async (req, res) => {
         let authorid = req.body.authorId
          if (!authorid) return res.send({ status : false,Error: 'Author Id missing' })
         if(!mongoose.isValidObjectId(authorid)) return res.status(404).send({status : false, Error : "Invalid Mongoose object Id"})
+        if(req.headers["decoded-token"] != authorid) return res.status(404).send({status : false, Error : "You are not authorised to create a blog"})
         let author = await authorModel.findOne({ _id: authorid }, { _id: 1 });
         if (authorid != author._id) return res.send({ msg: 'invalid AuthorId' })
         let createBlog = await blogsModel.create(blog)
@@ -41,6 +42,7 @@ let getBlogs = async (req, res) => {
         req.query.isDeleted = false
         req.query.isPublished = true
         let blogs = await blogsModel.find(req.query)
+        if(req.headers["decoded-token"] != blogs.authorid) return res.status(404).send({status : false, Error : "You are not authorised to see this blog"})
         if (!blogs || blogs.length == 0) return res.status(404).send({ status: false, msg: "Blogs Data not Found" })
         res.status(200).send({ status: true, data: blogs })
     } catch (err) {

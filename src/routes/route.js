@@ -10,15 +10,16 @@ router.get("/test-me", function (req, res) {
 
 router.post("/createAuthor", controllers.createAuthor )
 
-router.post("/createBlog", controllers.createBlogs)
+router.post("/createBlog",commonMW.authorization, controllers.createBlogs)
 
-router.get("/getAllBlogs",commonMW.authentication,controllers.getBlogs)
+router.get("/getAllBlogs",commonMW.authorization,controllers.getBlogs)
 
-router.put("/blogs/:blogId",commonMW.authentication,controllers.updateBlogs)
+router.put("/blogs/:blogId",commonMW.authorization,controllers.updateBlogs)
 
 router.delete("/blogs/:blogId", controllers.deleteBlog)
 
 router.delete("/blogs", controllers.deletByQuery)
+
 router.post("/login",controllers.loginAuthor)
 
 module.exports = router;
