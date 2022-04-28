@@ -57,7 +57,7 @@ const updateBlogs = async (req, res) => {
         if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId"})
         let blogAll = req.body
         if(!blogAll) return res.status(400).send({status: false, Error: "Input Data is Missing"})
-        let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, {blogAll,publishedAt : new Date()}, { new: true })
+        let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId },{blogAll})
         if (updateBlogs.length === 0) return res.status(404).send({ status: false, msg: "Failed to Update" })
         res.status(200).send({ msg: updateBlogs })
     } catch (err) {
