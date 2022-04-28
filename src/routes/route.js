@@ -22,7 +22,7 @@ router.put("/blogs/:blogId",middleWare.middleWare,controllers.updateBlogs)
 router.delete("/blogs/:blogId", controllers.deleteBlog)
 
 router.delete("/blogs", controllers.deletByQuery)
-router.post("/logIn",middleWare.middleWare,controllers.login)
+router.post("/logIn",controllers.login)
 
 module.exports = router;
 
