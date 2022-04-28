@@ -11,6 +11,7 @@ const authorization = async (req, res, next) => {
         let decodedToken1 = jwt.verify(token, "Uranium Project-1")
 
         req.headers["decoded-token"] = decodedToken1.authorId
+        
         next()
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
