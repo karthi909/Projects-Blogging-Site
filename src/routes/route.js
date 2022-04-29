@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controllers = require("../controllers/controllers");
-const commonMW = require("../middleware/middleware")
+const commonMW = require("../middleware/authorization")
 const authentication = require("../middleware/authentication")
 
 router.get("/test-me", function (req, res) {

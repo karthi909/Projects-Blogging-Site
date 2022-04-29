@@ -60,7 +60,7 @@ const createBlogs = async (req, res) => {
 
         let createBlog = await blogsModel.create(blog)  //creating the document using blogModel
 
-        res.status(201).send({ msg: createBlog })    //sending data from respond body
+        res.status(201).send({ msg: createBlog })    //it will send the data to respond body
     }
     catch (err) {
         console.log(err)
@@ -85,7 +85,7 @@ let getBlogs = async (req, res) => {
 
         if (!blogs || blogs.length == 0) return res.status(404).send({ status: false, msg: "Blogs Data not Found" }) //if blogs is not present or blogs is null
 
-        res.status(200).send({ status: true, data: blogs })  //sending the data to response body
+        res.status(200).send({ status: true, data: blogs })  //it will send the data to response body
     } catch (err) {
         res.status(500).send({ status: false, Error: err.message });
 
@@ -96,27 +96,29 @@ let getBlogs = async (req, res) => {
 
 const updateBlogs = async (req, res) => {
     try {
-        let blogId = req.params.blogId
-        if(!blogId) return res.status(400).send({status : false, Error :"Input Data is Required"})
-        if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId"})
+        let blogId = req.params.blogId //reciving details in blogId form Params that to be updated  
+        if(!blogId) return res.status(400).send({status : false, Error :"Input Data is Required"}) //if blogId is missing 
+        if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId"}) //This wiil validating if the blogId is monggose Id or not 
 
-        let check = await blogsModel.findById(blogId)
-        if(!check) return res.status(404).send({status :false,Error : "Invalid BlogId"})
+        let check = await blogsModel.findById(blogId) //finding the Blog Id 
+        if(!check) return res.status(404).send({status :false,Error : "Invalid BlogId"}) //Validating the blogId
 
-        if(check.isDeleted == true) return res.status(404).send({status :false, Error : "This Data is already deleted from the DataBase"})
-        if(req.headers["decoded-token"] != check.authorId) return res.status(404).send({status : false, Error : "You are not authorised to see this blog"})
+        if(check.isDeleted == true) return res.status(404).send({status :false, Error : "This Data is already deleted from the DataBase"}) // this will check weather the blog is deleted or not if deleted gives error message
+        if(req.headers["decoded-token"] != check.authorId) return res.status(404).send({status : false, Error : "You are not authorised to see this blog"}) // check wether the authorId is authorised or not
 
-        req.body.publishedAt = new Date()
-        req.body.isPublished =true;
+        //insertig the key value pair to the request body and set the date
+        req.body.publishedAt = new Date() 
+        req.body.isPublished =true; 
 
-        let blogAll = req.body
-        let {title,body,tags,category,subcategory} = blogAll
-        if(!blogAll) return res.status(400).send({status: false, Error: "Input Data is Missing"})
+        let blogAll = req.body  //reciving the data from req(request) body
+        let {title,body,tags,category,subcategory} = blogAll  
+        if(!blogAll) return res.status(400).send({status: false, Error: "Input Data is Missing"}) //if data is missing  gives the error 
 
+        //below line will find and update the data given in req body
         let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, {$addToSet:{tags:tags, subcategory:subcategory},title:title, body:body,category:category},{ new: true })
-        if (updateBlogs.length === 0) return res.status(404).send({ status: false, msg: "Failed to Update" })
+        if (updateBlogs.length === 0) return res.status(404).send({ status: false, msg: "Failed to Update" }) //if update blog is null gives the error message 
 
-        res.status(200).send({ msg: updateBlogs })
+        res.status(200).send({ msg: updateBlogs }) //it wiill send the data to the response body 
     } catch (err) {
         res.status(500).send({ status: false, Error: err.message });
 
@@ -127,22 +129,25 @@ const updateBlogs = async (req, res) => {
 
 const deleteBlog = async (req, res) => {
     try {
-        let blogId = req.params.blogId;
+        let blogId = req.params.blogId; //collect the data from params 
 
-        if(!blogId) return res.status(400).send({status :false,Error:"BlogId is Required"})
+        if(!blogId) return res.status(400).send({status :false,Error:"BlogId is Required"}) //if blogId is not present then it gives the error
 
-        if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId"})
+        if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId"}) ////This wiil validating if the blogId is monggose Id or not 
 
-        let findBlog = await blogsModel.findById(blogId)
-        if (!findBlog) return res.status(404).send({status: false, Error: "Invalid Blog Id"})
+        let findBlog = await blogsModel.findById(blogId) //it will find out the blogId 
+        if (!findBlog) return res.status(404).send({status: false, Error: "Invalid Blog Id"}) //validate the blogID 
 
-        if(findBlog.isDeleted == true) return res.status(404).send({status: false, Error: "Blog is Already Deleted"})
+        if(findBlog.isDeleted == true) return res.status(404).send({status: false, Error: "Blog is Already Deleted"}) //it will check wether the blogId is deleted or not if yes gives a message blogId is already deleted
 
+        // check wether the authorId is authorised or not
         if( findBlog.authorId != req.headers["decoded-token"]) return res.status(404).send({status : false, Error : "You are not authorised to see this blog"})
-        let updatedblog = await blogsModel.findOneAndUpdate({ _id: findBlog._id }, {isDeleted : true}, { new: true });
 
-        if(!updatedblog) return res.status(404).send({status :  false, Error :"Failed to Delete Data"})
-        res.status(200).send({ status: true, data: updatedblog })
+        let updatedblog = await blogsModel.findOneAndUpdate({ _id: findBlog._id }, {isDeleted : true}, { new: true }); //here it will find and update the blogId Deleted to true
+
+        if(!updatedblog) return res.status(404).send({status :  false, Error :"Failed to Delete Data"}) //if authorId is not authorised, gives error
+
+        res.status(200).send({ status: true, data: updatedblog }) //it will send the updated data
     }
     catch (err) {
         console.log(err)
@@ -155,12 +160,12 @@ const deleteBlog = async (req, res) => {
 
 const deletByQuery = async (req, res) => {
     try {
-        let data = req.query
+        let data = req.query //collects the data form query
 
-        if(!data) return res.status(400).send({status : false, Error :"Input Data is Missing"})
-        let deletData = await blogsModel.find(data,{isPublished :false})
+        if(!data) return res.status(400).send({status : false, Error :"Input Data is Missing"}) //if data is missing gives an error message 
+        let deletData = await blogsModel.find(data,{isPublished :false}) //finding documnet form blogsCollection using blogsModel
         
-        if (!deletData) return res.status(404).send({ status: false, msg: "Invalid Input Data"})
+        if (!deletData) return res.status(404).send({ status: false, msg: "Invalid Input Data"}) //
         
         if(req.headers["decoded-token"] != deletData[0].authorId) return res.status(404).send({status : false, Error : "You are not authorised to see this blog"})
 
