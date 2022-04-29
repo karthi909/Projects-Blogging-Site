@@ -1,4 +1,12 @@
-const authorModel = require("../models/authorModel")
+const authorModel = require('../models/authorModel')
+const jwt = require('jsonwebtoken')
+
+// var validateEmail = function(email) {
+//     var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+//     return re.test(email)
+// };
+
+const validator = require("email-validator")
 
 const loginAuthor = async (req, res) => {
     try{
@@ -6,7 +14,14 @@ const loginAuthor = async (req, res) => {
     if(Object.keys(data).length == 0) return res.status(400).send({status: false, msg: "Email and password is required to login"})
     
     let getAuthorData = await authorModel.findOne({email: data.email, password: data.password})
+    if(!data.email ) return res.status(400).send({status: false, Error:"email Feild is  Empty"})
+    if(!data.password) return res.status(400).send({status: false, Error:"Password Feild is Empty"})
+    if(!validator.validate(data.email)) return res.status(400).send({status: false, Error:"Not a Valid Email address"})
     if(!getAuthorData) return res.status(401).send({ status: false, msg: "Email or password is incorrect"})
+  
+    
+    
+    
 
     let token = jwt.sign({authorId: getAuthorData._id}, "Uranium Project-1")
 

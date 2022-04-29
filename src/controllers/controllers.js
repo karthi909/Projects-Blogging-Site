@@ -3,10 +3,22 @@ const blogsModel = require("../models/blogsModel")
 const mongoose = require('mongoose');
 const jwt=require('jsonwebtoken')
 
+var validateEmail = function(email) {
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return re.test(email)
+};
+
 const createAuthor = async (req, res) => {
     try {
         let data = req.body
         if(!data) return res.status(400).send({status : false, Error :"Input Data is Missing"})
+        if(!data.fname) res.status(400).send({status: false, Error:"First Name is Requried"})
+        if(!data.lname) res.status(400).send({status: false, Error:"Last Name is Requried"})
+        if(!data.title) res.status(400).send({status: false, Error:"title is Requried"})
+        if(!data.email) res.status(400).send({status: false, Error:"email  is Requried"})
+        if(data.email != validateEmail) res.status(400).send({status: false, Error:"Not a Valid Email Address"})
+        if(!data.password) res.status(400).send({status: false, Error:"password is Requried"})
+        
 
         let savedData = await authorModel.create(data)
 
@@ -23,6 +35,13 @@ const createBlogs = async (req, res) => {
     try {
         let blog = req.body
         if(!blog) return res.status(400).send({status : false, Error :"Input Data is Missing"})
+        if(!title) return res.status(400).send({status: false, Error:"title is Requried"})
+        if(!body) return res.status(400).send({status: false, Error:"body is Requried"})
+        if(!tags) return res.status(400).send({status: false, Error:"tags is Requried"})
+        if(!category) return res.status(400).send({status: false, Error:"category feild is Requried"})
+        if(!subcategory) return res.status(400).send({status: false, Error:"subCategory is Requried" })
+        if(!title) return res.status(400).send({status: false, Error:"title is Requried"})
+        
 
         let authorid = req.body.authorId
          if (!authorid) return res.send({ status : false,Error: 'Author Id missing' })
