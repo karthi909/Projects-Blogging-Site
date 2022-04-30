@@ -16,7 +16,7 @@ const loginAuthor = async (req, res) => {
 
     let token = jwt.sign({authorId: getAuthorData._id}, "Uranium Project-1")
 
-    res.setHeader("x-api-key", token)
+    // res.setHeader("x-api-key", token)
     res.status(200).send({status: true, msg: token})
     }catch(err){
         res.status(200).send({status: true, Error: err.message})

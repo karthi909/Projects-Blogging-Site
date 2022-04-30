@@ -3,10 +3,12 @@ const blogsModel = require("../models/blogsModel")
 const mongoose = require('mongoose');
 const jwt=require('jsonwebtoken')
 
-var validateEmail = function(email) {
-    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return re.test(email)
-};
+// var validateEmail = function(email) {
+//     var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+//     return re.test(email)
+// };
+
+const validator = require("email-validator")
 
 ////////////////////////////////////////////////Create Author////////////////////////////////////////////////////////////////
 
@@ -18,7 +20,8 @@ const createAuthor = async (req, res) => {
         if(!data.lname) return res.status(400).send({status: false, Error:"Last Name is Requried"})    //if lastname is not present in request body
         if(!data.title) return res.status(400).send({status: false, Error:"title is Requried"})        //if title is not present in request body
         if(!data.email) return res.status(400).send({status: false, Error:"email  is Requried"})       //if email id is not present in request body
-        if(data.email != validateEmail) return res.status(400).send({status: false, Error:"Not a Valid Email Address"}) //if email is is not valid
+        // if(data.email != validateEmail) return res.status(400).send({status: false, Error:"Not a Valid Email Address"}) //if email is is not valid
+        if(!validator.validate(data.email)) return res.status(400).send({status: false, Error:"Not a Valid Email address"})
         if(!data.password) return res.status(400).send({status: false, Error:"password is Requried"})   //if password is not present in request body
         
 
@@ -39,12 +42,12 @@ const createBlogs = async (req, res) => {
     try {
         let blog = req.body     // blogs data receiving from request body
         if(!blog) return res.status(400).send({status : false, Error :"Input Data is Missing"}) //if blogs is not present
-        if(!title) return res.status(400).send({status: false, Error:"title is Requried"})  //if title is not present 
-        if(!body) return res.status(400).send({status: false, Error:"body is Requried"})    //if body is not present
-        if(!tags) return res.status(400).send({status: false, Error:"tags is Requried"})    //if tags is not present
-        if(!category) return res.status(400).send({status: false, Error:"category feild is Requried"})  //if category is not present
-        if(!subcategory) return res.status(400).send({status: false, Error:"subCategory is Requried" })  //if subcategory is not present
-        if(!title) return res.status(400).send({status: false, Error:"title is Requried"})      //if title is not present
+        if(!blog.title) return res.status(400).send({status: false, Error:"title is Requried"})  //if title is not present 
+         if(!blog.body) return res.status(400).send({status: false, Error:"body is Requried"})    //if body is not present
+         if(!blog.tags) return res.status(400).send({status: false, Error:"tags is Requried"})    //if tags is not present
+         if(!blog.category) return res.status(400).send({status: false, Error:"category feild is Requried"})  //if category is not present
+         if(!blog.subcategory) return res.status(400).send({status: false, Error:"subCategory is Requried" })  //if subcategory is not present
+        
         
 
         let authorid = req.body.authorId   //authorid receiving from request body
@@ -165,7 +168,7 @@ const deletByQuery = async (req, res) => {
         if(!data) return res.status(400).send({status : false, Error :"Input Data is Missing"}) //if data is missing gives an error message 
         let deletData = await blogsModel.find(data,{isPublished :false}) //finding documnet form blogsCollection using blogsModel
         
-        if (!deletData) return res.status(404).send({ status: false, msg: "Invalid Input Data"}) //
+        if (!deletData) return res.status(404).send({ status: false, msg: "Invalid Input Data"}) //if data is not t
         
         if(req.headers["decoded-token"] != deletData[0].authorId) return res.status(404).send({status : false, Error : "You are not authorised to see this blog"})
 
