@@ -20,8 +20,8 @@ const createAuthor = async (req, res) => {
         if(!data.lname) return res.status(400).send({status: false, Error:"Last Name is Requried"})    //if lastname is not present in request body
         if(!data.title) return res.status(400).send({status: false, Error:"title is Requried"})        //if title is not present in request body
         if(!data.email) return res.status(400).send({status: false, Error:"email  is Requried"})       //if email id is not present in request body
-        // if(data.email != validateEmail) return res.status(400).send({status: false, Error:"Not a Valid Email Address"}) //if email is is not valid
-        if(!validator.validate(data.email)) return res.status(400).send({status: false, Error:"Not a Valid Email address"})
+        // if(data.email != validateEmail) return res.status(400).send({status: false, Error:"Not a Valid Email Address"}) 
+        if(!validator.validate(data.email)) return res.status(400).send({status: false, Error:"Not a Valid Email address"})  //if email is is not valid
         if(!data.password) return res.status(400).send({status: false, Error:"password is Requried"})   //if password is not present in request body
         
 
@@ -99,10 +99,13 @@ let getBlogs = async (req, res) => {
 
 const updateBlogs = async (req, res) => {
     try {
-        let blogId = req.params.blogId //reciving details in blogId form Params that to be updated  
-        if(!blogId) return res.status(400).send({status : false, Error :"Input Data is Required"}) //if blogId is missing 
-        if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId"}) //This wiil validating if the blogId is monggose Id or not 
-
+        
+        let blogId = req.params.blogId //reciving details in blogId form Params that to be updated 
+        console.log(blogId)
+        
+        if(!blogId) return res.status(400).send({status : false, Error :"Please Enter a Blog Id"}) //if blogId is missing 
+        if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId 1"}) //This wiil validating if the blogId is monggose Id or not 
+     
         let check = await blogsModel.findById(blogId) //finding the Blog Id 
         if(!check) return res.status(404).send({status :false,Error : "Invalid BlogId"}) //Validating the blogId
 
@@ -114,6 +117,7 @@ const updateBlogs = async (req, res) => {
         req.body.isPublished =true; 
 
         let blogAll = req.body  //reciving the data from req(request) body
+        //if(Object.keys({...blogAll}).length == 0) return res.status(400).send({status: false, msg: "Data is required to update a blog"})
         let {title,body,tags,category,subcategory} = blogAll  
         if(!blogAll) return res.status(400).send({status: false, Error: "Input Data is Missing"}) //if data is missing  gives the error 
 
@@ -164,7 +168,8 @@ const deleteBlog = async (req, res) => {
 const deletByQuery = async (req, res) => {
     try {
         let data = req.query //collects the data form query
-
+        console.log(data)
+        
         if(!data) return res.status(400).send({status : false, Error :"Input Data is Missing"}) //if data is missing gives an error message 
         let deletData = await blogsModel.find(data,{isPublished :false}) //finding documnet form blogsCollection using blogsModel
         
@@ -199,3 +204,7 @@ module.exports.deletByQuery = deletByQuery
 
 
 
+
+
+// const isValidObjectId = function(objectId) {
+//     return mongoose.Types.ObjectId.isValid(objectId)
