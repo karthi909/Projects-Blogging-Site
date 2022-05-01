@@ -110,19 +110,27 @@ const updateBlogs = async (req, res) => {
         if (check.isDeleted == true) return res.status(404).send({ status: false, Error: "This Data is already deleted from the DataBase" }) // this will check weather the blog is deleted or not if deleted gives error message
         if (req.headers["decoded-token"] != check.authorId) return res.status(404).send({ status: false, Error: "You are not authorised to see this blog" }) // check wether the authorId is authorised or not
 
-        //insertig the key value pair to the request body and set the date
+        
         let blogAll = req.body  //reciving the data from req(request) body
         console.log(blogAll);
         if (Object.keys(blogAll).length == 0) return res.status(400).send({ status: false, msg: "nothing to update" })
         
-        //if (!blogAll.title || !blogAll.body || !blogAll.tags || !blogAll.category || !blogAll.subcategory) return res.status(400).send({ msg: "data is missing to update" });
+        //if (!blogAll) return res.status(400).send({ status: false, Error: "Input Data is Missing" }) //if data is missing  gives the error 
+
+
+
+        if (!blogAll.title || !blogAll.body || !blogAll.tags || !blogAll.category || !blogAll.subcategory)  return res.status(400).send({ msg: "data is missing to update" });
+        
+        
+
+
+        
         let { title, body, tags, category, subcategory } = blogAll
-        if (!blogAll) return res.status(400).send({ status: false, Error: "Input Data is Missing" }) //if data is missing  gives the error 
-        //below line will find and update the data given in req body
+        //insertig the key value pair to the request body and set the date
         req.body.publishedAt = new Date()
         req.body.isPublished = true;
 
-
+        //below line will find and update the data given in req body
         let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, { $addToSet: { tags: tags, subcategory: subcategory }, title: title, body: body, category: category }, { new: true })
         if (updateBlogs.length === 0) return res.status(404).send({ status: false, msg: "Failed to Update" }) //if update blog is null gives the error message 
 
