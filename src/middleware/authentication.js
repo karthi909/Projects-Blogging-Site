@@ -14,7 +14,7 @@ const loginAuthor = async (req, res) => {
     if(!validator.validate(data.email)) return res.status(400).send({status: false, Error:"Not a Valid Email address"})
     if(!getAuthorData) return res.status(401).send({ status: false, msg: "Email or password is incorrect"})
 
-    let token = jwt.sign({authorId: getAuthorData._id}, "Uranium Project-1")
+    let token = jwt.sign({authorId: getAuthorData._id}, "Uranium Project-1",{ expiresIn: '2h'})
 
     // res.setHeader("x-api-key", token)
     res.status(200).send({status: true, msg: token})
@@ -28,3 +28,8 @@ module.exports.loginAuthor = loginAuthor
 
 //handle
 //set token validation
+// var token = jwt.sign({email_id:'123@gmail.com'}, "Stack", {
+
+//     expiresIn: '24h' // expires in 24 hours
+
+//      });

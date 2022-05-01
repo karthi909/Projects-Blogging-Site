@@ -3,11 +3,6 @@ const blogsModel = require("../models/blogsModel")
 const mongoose = require('mongoose');
 const jwt=require('jsonwebtoken')
 
-// var validateEmail = function(email) {
-//     var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-//     return re.test(email)
-// };
-
 const validator = require("email-validator")
 
 ////////////////////////////////////////////////Create Author////////////////////////////////////////////////////////////////
@@ -15,14 +10,22 @@ const validator = require("email-validator")
 const createAuthor = async (req, res) => {
     try {
         let data = req.body      //data receiving from the request body
-        if(!data) return res.status(400).send({status : false, Error :"Input Data is Missing"}) //if data is not present
+        if(Object.keys(data).length == 0) return res.status(400).send({status : false, Error :"Input Data is Missing"}) //if data is not present
         if(!data.fname) return res.status(400).send({status: false, Error:"First Name is Requried"})   //if firstname  is not present in request body
         if(!data.lname) return res.status(400).send({status: false, Error:"Last Name is Requried"})    //if lastname is not present in request body
+
         if(!data.title) return res.status(400).send({status: false, Error:"title is Requried"})        //if title is not present in request body
+        let validTitle = ['Mr', 'Mrs', 'Miss']
+        if(!validTitle.includes(data.title)) return res.status(400).send({status: false, Error: "Title should be one of this (Mr, Mrs, Miss)"})
+
         if(!data.email) return res.status(400).send({status: false, Error:"email  is Requried"})       //if email id is not present in request body
-        // if(data.email != validateEmail) return res.status(400).send({status: false, Error:"Not a Valid Email Address"}) 
-        if(!validator.validate(data.email)) return res.status(400).send({status: false, Error:"Not a Valid Email address"})  //if email is is not valid
+        let emailData = data.email.toLowerCase()
+        if(!validator.validate(emailData)) return res.status(400).send({status: false, Error:"Not a Valid Email address"})  //if email is is not valid
+        let findEmail = await authorModel.find({email:emailData})
+        if(findEmail.length != 0) return res.status(404).send({status: false, Error: "Email already exist"}) 
+
         if(!data.password) return res.status(400).send({status: false, Error:"password is Requried"})   //if password is not present in request body
+        if(data.password.length > 10) return res.status(400).send({status: false, Error: "Password is too long"})
         
 
         let savedData = await authorModel.create(data) //we are creating the document using authorModel
@@ -41,8 +44,11 @@ const createAuthor = async (req, res) => {
 const createBlogs = async (req, res) => {
     try {
         let blog = req.body     // blogs data receiving from request body
-        if(!blog) return res.status(400).send({status : false, Error :"Input Data is Missing"}) //if blogs is not present
+        if(Object.keys(blog).length == 0) return res.status(400).send({status : false, Error :"Input Data is Missing"}) //if blogs is not present
         if(!blog.title) return res.status(400).send({status: false, Error:"title is Requried"})  //if title is not present 
+        let titleString = /^[A-Za-z\s]+$/
+        if(!titleString.test(blog.title)) return res.status(400).send({status: false, Error: "Title must be alphabetic"})
+
          if(!blog.body) return res.status(400).send({status: false, Error:"body is Requried"})    //if body is not present
          if(!blog.tags) return res.status(400).send({status: false, Error:"tags is Requried"})    //if tags is not present
          if(!blog.category) return res.status(400).send({status: false, Error:"category feild is Requried"})  //if category is not present
@@ -75,13 +81,14 @@ const createBlogs = async (req, res) => {
 
 let getBlogs = async (req, res) => {
     try {
-        if(!req.query) return res.status(400).send({status : false, Error : "Input Data is Missing"})  //if the data is not present in request query
+        if(Object.keys(req.query).length == 0) return res.status(400).send({status : false, Error : "Query Data is Missing"})  //if the data is not present in request query
 
         //insertig the key value pair to the request query
         req.query.isDeleted = false                                        
         req.query.isPublished = true
 
         let blogs = await blogsModel.find(req.query)  //finding the document
+
 
         //Authorization
         if(req.headers["decoded-token"] != blogs[0].authorId) return res.status(404).send({status : false, Error : "You are not authorised to see this blog"}) 
@@ -120,7 +127,6 @@ const updateBlogs = async (req, res) => {
         //if(Object.keys({...blogAll}).length == 0) return res.status(400).send({status: false, msg: "Data is required to update a blog"})
         let {title,body,tags,category,subcategory} = blogAll  
         if(!blogAll) return res.status(400).send({status: false, Error: "Input Data is Missing"}) //if data is missing  gives the error 
-
         //below line will find and update the data given in req body
         let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, {$addToSet:{tags:tags, subcategory:subcategory},title:title, body:body,category:category},{ new: true })
         if (updateBlogs.length === 0) return res.status(404).send({ status: false, msg: "Failed to Update" }) //if update blog is null gives the error message 
