@@ -44,6 +44,7 @@ const createAuthor = async (req, res) => {
 const createBlogs = async (req, res) => {
     try {
         let blog = req.body     // blogs data receiving from request body
+
         if (Object.keys(blog).length == 0) return res.status(400).send({ status: false, Error: "Input Data is Missing" }) //if blogs is not present
         if (!blog.title) return res.status(400).send({ status: false, Error: "title is Requried" })  //if title is not present 
         let titleString = /^[A-Za-z\s]+$/
@@ -53,22 +54,14 @@ const createBlogs = async (req, res) => {
         if (!blog.tags) return res.status(400).send({ status: false, Error: "tags is Requried" })    //if tags is not present
         if (!blog.category) return res.status(400).send({ status: false, Error: "category feild is Requried" })  //if category is not present
         if (!blog.subcategory) return res.status(400).send({ status: false, Error: "subCategory is Requried" })  //if subcategory is not present
-
-
-
         let authorid = req.body.authorId   //authorid receiving from request body
         if (!authorid) return res.send({ status: false, Error: 'Author Id missing' }) //if authorid is not present 
-
         if (!mongoose.isValidObjectId(authorid)) return res.status(404).send({ status: false, Error: "Invalid Mongoose object Id" })  //here we are checking auhtorid is valid are not
-
-        //here we are  autherizing with authorid that the right user or not
+//here we are  autherizing with authorid that the right user or not
         if (req.headers["decoded-token"] != authorid) return res.status(404).send({ status: false, Error: "You are not authorised to create a blog" })
-
         let author = await authorModel.findOne({ _id: authorid }, { _id: 1 }); //finding the data by authorid 
         if (authorid != author._id) return res.send({ msg: 'invalid AuthorId' }) //checking the author id is valid or not
-
         let createBlog = await blogsModel.create(blog)  //creating the document using blogModel
-
         res.status(201).send({ msg: createBlog })    //it will send the data to respond body
     }
     catch (err) {
@@ -108,8 +101,6 @@ const updateBlogs = async (req, res) => {
     try {
 
         let blogId = req.params.blogId //reciving details in blogId form Params that to be updated 
-
-
         if (!blogId) return res.status(400).send({ status: false, Error: "Please Enter a Blog Id" }) //if blogId is missing 
         if (!mongoose.isValidObjectId(blogId)) return res.status(404).send({ status: false, Error: "Invalid blogId 1" }) //This wiil validating if the blogId is monggose Id or not 
 
@@ -120,18 +111,12 @@ const updateBlogs = async (req, res) => {
         if (req.headers["decoded-token"] != check.authorId) return res.status(404).send({ status: false, Error: "You are not authorised to see this blog" }) // check wether the authorId is authorised or not
 
         //insertig the key value pair to the request body and set the date
-
-
         let blogAll = req.body  //reciving the data from req(request) body
         console.log(blogAll);
         if (Object.keys(blogAll).length == 0) return res.status(400).send({ status: false, msg: "nothing to update" })
-        if (!blogAll.title || !blogAll.body || !blogAll.tags || !blogAll.category || !blogAll.subcategory) return res.status(400).send({ msg: "data is missing to update" });
-
-
+        
+        //if (!blogAll.title || !blogAll.body || !blogAll.tags || !blogAll.category || !blogAll.subcategory) return res.status(400).send({ msg: "data is missing to update" });
         let { title, body, tags, category, subcategory } = blogAll
-
-
-
         if (!blogAll) return res.status(400).send({ status: false, Error: "Input Data is Missing" }) //if data is missing  gives the error 
         //below line will find and update the data given in req body
         req.body.publishedAt = new Date()
@@ -150,63 +135,34 @@ const updateBlogs = async (req, res) => {
 
 /////////////////////////////////////////////////////////delete by path params Blogs////////////////////////////////////////////////
 
-// const deleteBlog = async (req, res) => {
-//     try {
-//         let blogId = req.params.blogId; //collect the data from params 
-//         console.log(blogId);        
-
-//         if(Object.keys(blogId).length==0) return res.status(404).send({msg:"Invalid Id"});   //if blogId is not present then it gives the error
-
-//         if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid Mongoose ObjectId"}) ////This wiil validating if the blogId is monggose Id or not 
-
-//         let findBlog = await blogsModel.findById(blogId) //it will find out the blogId 
-//         if (!findBlog) return res.status(404).send({status: false, Error: "Invalid Blog Id"}) //validate the blogID 
-
-//         if(findBlog.isDeleted == true) return res.status(404).send({status: false, Error: "Blog is Already Deleted"}) //it will check wether the blogId is deleted or not if yes gives a message blogId is already deleted
-
-//         // check wether the authorId is authorised or not
-//         if( findBlog.authorId != req.headers["decoded-token"]) return res.status(404).send({status : false, Error : "You are not authorised to see this blog"})
-
-//         let updatedblog = await blogsModel.findOneAndUpdate({ _id: findBlog._id }, {isDeleted : true}, { new: true }); //here it will find and update the blogId Deleted to true
-
-//         if(!updatedblog) return res.status(404).send({status :  false, Error :"Failed to Delete Data"}) //if authorId is not authorised, gives error
-
-//         res.status(200).send({ success:true,data: updatedblog }) //it will send the updated data
-//     }
-//     catch (err) {
-//         console.log(err)
-//         res.status(500).send({ status :false,Error: err.message })
-//     }
-
-// }
-
 
 
 const deleteBlog = async (req, res) => {
-    try {
+try {
         let blogId = req.params.blogId; //collect the data from params 
+        console.log(blogId);
 
-        if(!blogId) return res.status(400).send({status :false,Error:"BlogId is Required"}) //if blogId is not present then it gives the error
+        if (Object.keys(blogId).length == 0) return res.status(404).send({ msg: "Invalid Id" });   //if blogId is not present then it gives the error
 
-        if(!mongoose.isValidObjectId(blogId)) return res.status(404).send({status : false, Error : "Invalid blogId"}) ////This wiil validating if the blogId is monggose Id or not 
+        if (!mongoose.isValidObjectId(blogId)) return res.status(404).send({ status: false, Error: "Invalid Mongoose ObjectId" }) ////This wiil validating if the blogId is monggose Id or not 
 
         let findBlog = await blogsModel.findById(blogId) //it will find out the blogId 
-        if (!findBlog) return res.status(404).send({status: false, Error: "Invalid Blog Id"}) //validate the blogID 
+        if (!findBlog) return res.status(404).send({ status: false, Error: "Invalid Blog Id" }) //validate the blogID 
 
-        if(findBlog.isDeleted == true) return res.status(404).send({status: false, Error: "Blog is Already Deleted"}) //it will check wether the blogId is deleted or not if yes gives a message blogId is already deleted
+        if (findBlog.isDeleted == true) return res.status(404).send({ status: false, Error: "Blog is Already Deleted" }) //it will check wether the blogId is deleted or not if yes gives a message blogId is already deleted
 
         // check wether the authorId is authorised or not
-        if( findBlog.authorId != req.headers["decoded-token"]) return res.status(404).send({status : false, Error : "You are not authorised to see this blog"})
+        if (findBlog.authorId != req.headers["decoded-token"]) return res.status(404).send({ status: false, Error: "You are not authorised to see this blog" })
 
-        let updatedblog = await blogsModel.findOneAndUpdate({ _id: findBlog._id }, {isDeleted : true}, { new: true }); //here it will find and update the blogId Deleted to true
+        let updatedblog = await blogsModel.findOneAndUpdate({ _id: findBlog._id }, { isDeleted: true }, { new: true }); //here it will find and update the blogId Deleted to true
 
-        if(!updatedblog) return res.status(404).send({status :  false, Error :"Failed to Delete Data"}) //if authorId is not authorised, gives error
+        if (!updatedblog) return res.status(404).send({ status: false, Error: "Failed to Delete Data" }) //if authorId is not authorised, gives error
 
-        res.status(200).send({ status: true, data: updatedblog }) //it will send the updated data
+        res.status(200).send({ success: true, data: updatedblog }) //it will send the updated data
     }
     catch (err) {
         console.log(err)
-        res.status(500).send({ status :false,Error: err.message })
+        res.status(500).send({ status: false, Error: err.message })
     }
 
 }
@@ -215,31 +171,26 @@ const deleteBlog = async (req, res) => {
 
 const deletByQuery = async (req, res) => {
     try {
-        let data = req.query //collects the data form query
-        console.log(data)
-
-        if (!data) return res.status(400).send({ status: false, Error: "Input Data is Missing" }) //if data is missing gives an error message 
-        let deletData = await blogsModel.find(data, { isPublished: false }) //finding documnet form blogsCollection using blogsModel
+        let data1 = req.query //collects the data form query
+        
+        if (!data1) return res.status(401).send({ status: false, Error: "Input Data is Missing" }) //if data is missing gives an error message 
+        if (!data1.authorId && !data1.category && !data1.subcategory && !data1.tags && !data1.isPublished) return res.status(400).send({ Error: "data is missing to update" });
+        if (data1.isPublished == true) return res.status(400).send({ status: false, Error: "data must be unpublished" })
+        let deletData = await blogsModel.find(data1) //finding documnet form blogsCollection using blogsModel
+       if(deletData.isDeleted==true) return res.status(404).send({msg:"The data is already deleted"});
 
         if (!deletData) return res.status(404).send({ status: false, msg: "Invalid Input Data" }) //if data is not t
-
+       
         if (req.headers["decoded-token"] != deletData[0].authorId) return res.status(404).send({ status: false, Error: "You are not authorised to see this blog" })
-
         let delete1 = await blogsModel.findByIdAndUpdate(deletData[0]._id, { isDeleted: true }, { new: true })
         if (!delete1) return res.status(404).send({ status: false, Error: "Failed to Delete Data" })
 
-        res.status(200).send({ status: true, msg: delete1 })
+        res.status(200).send({ status: true,details: delete1 })
     } catch (err) {
         res.status(500).send({ status: false, Error: err.message })
     }
 }
-
-
-
-
-
 module.exports.createAuthor = createAuthor
-
 module.exports.createBlogs = createBlogs
 
 module.exports.getBlogs = getBlogs
@@ -249,10 +200,3 @@ module.exports.updateBlogs = updateBlogs
 module.exports.deleteBlog = deleteBlog
 
 module.exports.deletByQuery = deletByQuery
-
-
-
-
-
-// const isValidObjectId = function(objectId) {
-//     return mongoose.Types.ObjectId.isValid(objectId)
