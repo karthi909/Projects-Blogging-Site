@@ -19,7 +19,7 @@ router.put("/blogs/:blogId", commonMW.authorization,controllers.updateBlogs)
 
 router.delete("/blogs/:blogId", commonMW.authorization, controllers.deleteBlog)
 
-router.delete("/blogs", commonMW.authorization, controllers.deletByQuery)
+router.delete("/Blogs", commonMW.authorization, controllers.deletByQuery)
 
 router.post("/login", authentication.loginAuthor)
 
