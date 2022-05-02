@@ -35,7 +35,7 @@ const createAuthor = async (req, res) => {
         //we are creating the document using authorModel
         let savedData = await authorModel.create(data) //we are creating the document using authorModel
         if (!savedData) return res.status(404).send({ status: false, Error: "Failed to Create Author Data" }) 
-        res.status(201).send({status: true,msg: "Author created successfully", Details: savedData })   //sending the data in the respond body
+        res.status(201).send({status: true,msg: "Author created successfully", data: savedData })   //sending the data in the respond body
     } catch (err) {
         res.status(500).send({ status: false, Error: err.message })
     }
@@ -164,7 +164,7 @@ try {
 
         if (!updatedblog) return res.status(404).send({ status: false, Error: "Failed to Delete Data" }) //if authorId is not authorised, gives error
 
-        res.status(200).send({ success: true,message: "Deleted Successfully", data: updatedblog }) //it will send the updated data
+        res.status(200).send({ status: true,message: "Deleted Successfully", data: updatedblog }) //it will send the updated data
     }
     catch (err) {
         console.log(err)
@@ -193,7 +193,7 @@ const deletByQuery = async (req, res) => {
         let delete1 = await blogsModel.findByIdAndUpdate(deletData[0]._id, { isDeleted: true }, { new: true })
         if (!delete1) return res.status(404).send({ status: false, Error: "Failed to Delete Data" })
 
-        res.status(200).send({ status: true,message: "Deleted Successfully", details: delete1 })
+        res.status(200).send({ status: true,message: "Deleted Successfully", data: delete1 })
     } catch (err) {
         res.status(500).send({ status: false, Error: err.message })
     }
