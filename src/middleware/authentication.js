@@ -26,10 +26,3 @@ const loginAuthor = async (req, res) => {
 module.exports.loginAuthor = loginAuthor
 
 
-//handle
-//set token validation
-// var token = jwt.sign({email_id:'123@gmail.com'}, "Stack", {
-
-//     expiresIn: '24h' // expires in 24 hours
-
-//      });
