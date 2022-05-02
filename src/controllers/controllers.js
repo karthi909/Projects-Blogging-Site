@@ -35,7 +35,7 @@ const createAuthor = async (req, res) => {
         //we are creating the document using authorModel
         let savedData = await authorModel.create(data) //we are creating the document using authorModel
         if (!savedData) return res.status(404).send({ status: false, Error: "Failed to Create Author Data" }) 
-        res.status(201).send({status: true, Details: savedData })   //sending the data in the respond body
+        res.status(201).send({status: true,msg: "Author created successfully", Details: savedData })   //sending the data in the respond body
     } catch (err) {
         res.status(500).send({ status: false, Error: err.message })
     }
@@ -70,7 +70,7 @@ const createBlogs = async (req, res) => {
 
         //creating the document using blogModel
         let createBlog = await blogsModel.create(blog)  
-        res.status(201).send({ msg: createBlog })    //it will send the data to respond body
+        res.status(201).send({ status: true, message: "Blogs Created successfully",data: createBlog })    //it will send the data to respond body
     }
     catch (err) {
         console.log(err)
@@ -96,7 +96,7 @@ let getBlogs = async (req, res) => {
 
         if (!blogs || blogs.length == 0) return res.status(404).send({ status: false, msg: "Blogs Data not Found" }) //if blogs is not present or blogs is null
 
-        res.status(200).send({ status: true, data: blogs })  //it will send the data to response body
+        res.status(200).send({ status: true, message: "Blog Lists", data: blogs })  //it will send the data to response body
     } catch (err) {
         res.status(500).send({ status: false, Error: err.message });
 
@@ -132,7 +132,7 @@ const updateBlogs = async (req, res) => {
         let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, { $addToSet: { tags: tags, subcategory: subcategory }, title: title, body: body, category: category }, { new: true })
         if (updateBlogs.length === 0) return res.status(404).send({ status: false, msg: "Failed to Update" }) //if update blog is null gives the error message 
 
-        res.status(200).send({ msg: updateBlogs }) //it wiill send the data to the response body 
+        res.status(200).send({status: true, message: "Updated Successfully", data: updateBlogs }) //it wiill send the data to the response body 
     } catch (err) {
         res.status(500).send({ status: false, Error: err.message });
 
@@ -164,7 +164,7 @@ try {
 
         if (!updatedblog) return res.status(404).send({ status: false, Error: "Failed to Delete Data" }) //if authorId is not authorised, gives error
 
-        res.status(200).send({ success: true, data: updatedblog }) //it will send the updated data
+        res.status(200).send({ success: true,message: "Deleted Successfully", data: updatedblog }) //it will send the updated data
     }
     catch (err) {
         console.log(err)
@@ -193,7 +193,7 @@ const deletByQuery = async (req, res) => {
         let delete1 = await blogsModel.findByIdAndUpdate(deletData[0]._id, { isDeleted: true }, { new: true })
         if (!delete1) return res.status(404).send({ status: false, Error: "Failed to Delete Data" })
 
-        res.status(200).send({ status: true,details: delete1 })
+        res.status(200).send({ status: true,message: "Deleted Successfully", details: delete1 })
     } catch (err) {
         res.status(500).send({ status: false, Error: err.message })
     }
