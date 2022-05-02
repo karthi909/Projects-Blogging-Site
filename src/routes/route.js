@@ -9,17 +9,17 @@ router.get("/test-me", function (req, res) {
 })
 
 
-router.post("/createAuthor", controllers.createAuthor )
+router.post("/authors", controllers.createAuthor )
 
-router.post("/createBlog", commonMW.authorization, controllers.createBlogs)
+router.post("/blogs", commonMW.authorization, controllers.createBlogs)
 
-router.get("/getAllBlogs", commonMW.authorization,controllers.getBlogs)
+router.get("/blogs", commonMW.authorization,controllers.getBlogs)
 
 router.put("/blogs/:blogId", commonMW.authorization,controllers.updateBlogs)
 
 router.delete("/blogs/:blogId", commonMW.authorization, controllers.deleteBlog)
 
-router.delete("/deleteByQuery", commonMW.authorization, controllers.deletByQuery)
+router.delete("/blogs", commonMW.authorization, controllers.deletByQuery)
 
 router.post("/login", authentication.loginAuthor)
 
