@@ -183,7 +183,9 @@ const deletByQuery = async (req, res) => {
         if (!data1.authorId && !data1.category && !data1.subcategory && !data1.tags && !data1.isPublished) return res.status(400).send({ Error: "data is missing to update" });
         if (data1.isPublished == true) return res.status(400).send({ status: false, Error: "data must be unpublished" })
         let deletData = await blogsModel.find(data1) //finding documnet form blogsCollection using blogsModel
-       if(deletData.isDeleted==true) return res.status(404).send({msg:"The data is already deleted"});
+        //console.log(deletData)
+
+       if(deletData[0].isDeleted == true) return res.status(404).send({msg:"The data is already deleted"});
 
         if (!deletData) return res.status(404).send({ status: false, msg: "Invalid Input Data" }) //if data is not t
        
