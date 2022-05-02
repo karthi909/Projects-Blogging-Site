@@ -160,7 +160,7 @@ try {
         if (findBlog.authorId != req.headers["decoded-token"]) return res.status(404).send({ status: false, Error: "You are not authorised to see this blog" })
 
          //here it will find and update the blogId Deleted to true
-        let updatedblog = await blogsModel.findOneAndUpdate({ _id: findBlog._id }, { isDeleted: true }, { new: true });
+        let updatedblog = await blogsModel.findOneAndUpdate({ _id: findBlog._id }, { isDeleted: true, deletedAt: new Date()}, { new: true });
 
         if (!updatedblog) return res.status(404).send({ status: false, Error: "Failed to Delete Data" }) //if authorId is not authorised, gives error
 
@@ -192,7 +192,7 @@ const deletByQuery = async (req, res) => {
         if (req.headers["decoded-token"] != deletData[0].authorId) return res.status(404).send({ status: false, Error: "You are not authorised to see this blog" })
 
        // here it will find and update the document Deleted to true
-        let delete1 = await blogsModel.findByIdAndUpdate(deletData[0]._id, { isDeleted: true }, { new: true })
+        let delete1 = await blogsModel.findByIdAndUpdate(deletData[0]._id, { isDeleted: true, deletedAt: new Date() }, { new: true })
         if (!delete1) return res.status(404).send({ status: false, Error: "Failed to Delete Data" })
 
         res.status(200).send({ status: true,message: "Deleted Successfully", data: delete1 })
