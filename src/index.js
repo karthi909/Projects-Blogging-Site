@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-mongoose.connect("mongodb+srv://project-1_G10:OCBfkRxYDJRMsStJ@cluster0.evjpk.mongodb.net/project-blogs", {
+mongoose.connect("mongodb+srv://KA909_1:karthi123@cluster0.qpomb.mongodb.net/project-Blogs", {
     useNewUrlParser: true
 })
 .then( () => console.log("MongoDb is connected"))
@@ -23,3 +23,4 @@ app.listen(process.env.PORT || 3000, function () {
 });
 
 //hhhhhhhhhhhhhhh
+//mongodb+srv://project-1_G10:OCBfkRxYDJRMsStJ@cluster0.evjpk.mongodb.net/project-blogs

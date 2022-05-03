@@ -50,7 +50,7 @@ const createBlogs = async (req, res) => {
 
         if (Object.keys(blog).length == 0) return res.status(400).send({ status: false, Error: "Input Data is Missing" }) //if blogs is not present
         if (!blog.title) return res.status(400).send({ status: false, Error: "title is Requried" })  //if title is not present 
-        let titleString = /^[A-Za-z\s]+$/
+        let titleString = /^[ A-Za-z0-9_@./#&+-]*$/
         if (!titleString.test(blog.title)) return res.status(400).send({ status: false, Error: "Title must be alphabetic" })
 
         //if body,tags,category and subcategory is not present then show error
@@ -58,6 +58,8 @@ const createBlogs = async (req, res) => {
         if (!blog.tags) return res.status(400).send({ status: false, Error: "tags is Requried" })   
         if (!blog.category) return res.status(400).send({ status: false, Error: "category feild is Requried" }) 
         if (!blog.subcategory) return res.status(400).send({ status: false, Error: "subCategory is Requried" }) 
+
+        blog.publishedAt = new Date()
 
         let authorid = req.body.authorId   //authorid receiving from request body
         if (!authorid) return res.send({ status: false, Error: 'Author Id missing' }) //if authorid is not present 
@@ -123,13 +125,13 @@ const updateBlogs = async (req, res) => {
         let blogAll = req.body  //reciving the data from req(request) body
         if (Object.keys(blogAll).length == 0) return res.status(400).send({ status: false, msg: "nothing to update" })
         
-        let { title, body, tags, category, subcategory } = blogAll
+        let { title, body, tags, category, subcategory, isPublished } = blogAll
         //insertig the key value pair to the request body and set the date
         req.body.publishedAt = new Date()
         req.body.isPublished = true;
 
         //below line will find and update the data given in req body
-        let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, { $addToSet: { tags: tags, subcategory: subcategory }, title: title, body: body, category: category }, { new: true })
+        let updateBlogs = await blogsModel.findOneAndUpdate({ _id: blogId }, { $addToSet: { tags: tags, subcategory: subcategory }, title: title, body: body, category: category, isPublished: isPublished }, { new: true })
         if (updateBlogs.length === 0) return res.status(404).send({ status: false, msg: "Failed to Update" }) //if update blog is null gives the error message 
 
         res.status(200).send({status: true, message: "Updated Successfully", data: updateBlogs }) //it wiill send the data to the response body 
@@ -164,7 +166,7 @@ try {
 
         if (!updatedblog) return res.status(404).send({ status: false, Error: "Failed to Delete Data" }) //if authorId is not authorised, gives error
 
-        res.status(200).send({ status: true,message: "Deleted Successfully", data: updatedblog }) //it will send the updated data
+        res.status(200).send({ status: true,message: "Blog deletion is successful", data: updatedblog }) //it will send the updated data
     }
     catch (err) {
         console.log(err)
