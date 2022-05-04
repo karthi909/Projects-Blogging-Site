@@ -13,16 +13,16 @@ const createAuthor = async (req, res) => {
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, Error: "Input Data is Missing" }) //if data is not present
 
         //here we can check that if firstname and lastname is not present in request body
-        if (!data.fname) return res.status(400).send({ status: false, Error: "First Name is Requried" })
-        if (!data.lname) return res.status(400).send({ status: false, Error: "Last Name is Requried" })   
+        if (data.fname.trim().length == 0) return res.status(400).send({ status: false, Error: "First Name is Requried" })
+        if (data.lname.trim().length == 0) return res.status(400).send({ status: false, Error: "Last Name is Requried" })   
 
-        if (!data.title) return res.status(400).send({ status: false, Error: "title is Requried" })        //if title is not present in request body
+        if (data.title.trim().length == 0) return res.status(400).send({ status: false, Error: "title is Requried" })        //if title is not present in request body
 
         //validate the title
         let validTitle = ['Mr', 'Mrs', 'Miss']
         if (!validTitle.includes(data.title)) return res.status(400).send({ status: false, Error: "Title should be one of this (Mr, Mrs, Miss)" })
 
-        if (!data.email) return res.status(400).send({ status: false, Error: "email  is Requried" })       //if email id is not present in request body
+        if (data.email.trim().length == 0) return res.status(400).send({ status: false, Error: "email  is Requried" })       //if email id is not present in request body
         let emailData = data.email.toLowerCase()
         if (!validator.validate(emailData)) return res.status(400).send({ status: false, Error: "Not a Valid Email address" })  //if emailid is is not valid
         let findEmail = await authorModel.find({ email: emailData })
@@ -49,15 +49,15 @@ const createBlogs = async (req, res) => {
         let blog = req.body     // blogs data receiving from request body
 
         if (Object.keys(blog).length == 0) return res.status(400).send({ status: false, Error: "Input Data is Missing" }) //if blogs is not present
-        if (!blog.title) return res.status(400).send({ status: false, Error: "title is Requried" })  //if title is not present 
+        if (blog.title.trim().length == 0) return res.status(400).send({ status: false, Error: "title is Requried" })  //if title is not present 
         let titleString = /^[ A-Za-z0-9_@./#&+-]*$/
         if (!titleString.test(blog.title)) return res.status(400).send({ status: false, Error: "Title must be alphabetic" })
 
         //if body,tags,category and subcategory is not present then show error
         if (!blog.body) return res.status(400).send({ status: false, Error: "body is Requried" }) 
-        if (!blog.tags) return res.status(400).send({ status: false, Error: "tags is Requried" })   
-        if (!blog.category) return res.status(400).send({ status: false, Error: "category feild is Requried" }) 
-        if (!blog.subcategory) return res.status(400).send({ status: false, Error: "subCategory is Requried" }) 
+        if (blog.tags.trim().length == 0) return res.status(400).send({ status: false, Error: "tags is Requried" })   
+        if (blog.category.trim().length == 0) return res.status(400).send({ status: false, Error: "category feild is Requried" }) 
+        if (blog.subcategory.trim().length == 0) return res.status(400).send({ status: false, Error: "subCategory is Requried" }) 
 
         blog.publishedAt = new Date()
 
