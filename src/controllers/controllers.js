@@ -60,6 +60,7 @@ const createBlogs = async (req, res) => {
 
         if(!blog.title) return res.status(400).send({ status: false, Error: "title Feild is Missing " })
         if (blog.title.trim().length == 0) return res.status(400).send({ status: false, Error: "title is Requried" })  //if title is not present 
+
         let titleString = /^[ A-Za-z0-9_@./#&+-]*$/
         if (!titleString.test(blog.title)) return res.status(400).send({ status: false, Error: "Title must be alphabetic" })
 
@@ -67,13 +68,13 @@ const createBlogs = async (req, res) => {
         if (!blog.body) return res.status(400).send({ status: false, Error: "body Feild is Missing " })
         
         if (!blog.tags) return res.status(400).send({ status: false, Error: "tags Feild is Missing" })
-        if (blog.tags.trim().length == 0) return res.status(400).send({ status: false, Error: "tags is Requried" })
+       
         
         if (!blog.category) return res.status(400).send({ status: false, Error: "category feild is Missing" })
         if (blog.category.trim().length == 0) return res.status(400).send({ status: false, Error: "category feild is Requried" })
         
         if (!blog.subcategory) return res.status(400).send({ status: false, Error: "subCategoryFeild is Missing " }) 
-        if (blog.subcategory.trim().length == 0) return res.status(400).send({ status: false, Error: "subCategory is Requried" }) 
+       
 
 
 
